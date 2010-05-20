@@ -6,45 +6,57 @@
 // ==/UserScript==
 
 window.addEventListener("keydown", KeyCheck, true);
-var curPost = null;
-
 function scrollDown() {
+	var postOffset = 50;
 	var postDiv = document.getElementById("posts");
 	var posts = getElementsByClassName("post", "div", postDiv);
-	var index = findIndex(posts, curPost);
+	var index = findCurrentIndex(posts);
 	if (index >= posts.length) {
 		return;
 	}
-	curPost = posts[index+1];
-	scrollToPost(curPost);
-}
+	scrollToPost(posts[index+1], postOffset);
+};
 
 function scrollUp() {
+	var postOffset = 50;
 	var postDiv = document.getElementById("posts");
 	var posts = getElementsByClassName("post", "div", postDiv);
-	var index = findIndex(posts, curPost);
+	var index = findCurrentIndex(posts);
 	if (index <= 0) {
 		return;
 	}
-	curPost = posts[index-1];
-	scrollToPost(curPost);
-}
+	scrollToPost(posts[index-1], postOffset);
+};
 
-function scrollToPost(post) {
-	post.scrollIntoView();
-	scrollVertically(post, -50); // TODO causes some flickering from time to time, better way?
-}
+function scrollToPost(post, offset) {
+	scrollVertically(post, -offset);
+};
 
-function findIndex(elements, element) {
-	if (element == null) {
-		return 0;
-	}
+function findCurrentIndex(elements) {
+	var pos = window.scrollY;
 	for (var i = 0; i < elements.length; i++) {
-		if (elements[i] == element) {
+		var top = findPos(elements[i])[1];
+		var bottom = top + elements[i].offsetHeight;
+		if (top >= pos) {
 			return i;
 		}
 	}
-}
+	return 0;
+};
+
+/**
+ * Taken from http://www.quirksmode.org/js/findpos.html
+ */
+function findPos(obj) {
+	var curleft = curtop = 0;
+	if (obj.offsetParent) {
+		do {
+			curleft += obj.offsetLeft;
+			curtop += obj.offsetTop;
+		} while (obj = obj.offsetParent);
+	}
+	return [curleft,curtop];
+};
 
 /**
  * Based on http://stackoverflow.com/questions/2129303/greasemonkey-javascript-key-press-help/2129405#2129405
@@ -61,17 +73,18 @@ function KeyCheck(e) {
 			scrollUp();
 			break;
 	}
-}
+};
 
 /**
- * Taken from http://forums.devshed.com/javascript-development-115/can-i-offset-scrollintoview-by-x-amount-of-pixels-535180.html
+ * Based on http://forums.devshed.com/javascript-development-115/can-i-offset-scrollintoview-by-x-amount-of-pixels-535180.html
  */
 function scrollVertically(element, offset) {
+	var pos = findPos(element)[1] + offset;
 	var re=/html$/i;
 	while (!re.test(element.tagName) && (1 > element.scrollTop))
 		element = element.parentNode;
-	if (0 < element.scrollTop) element.scrollTop += offset;
-}
+	if (0 < element.scrollTop) element.scrollTop = pos;
+};
 
 /**
  * Developed by Robert Nyman, http://www.robertnyman.com
