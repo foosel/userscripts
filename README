@@ -1,0 +1,2 @@
+soupio_vi_keys.user.js:
+	Enables jumping from post to post on soup.io by using the vi keys (j for next, k for previous; n and p are supported as well). 
