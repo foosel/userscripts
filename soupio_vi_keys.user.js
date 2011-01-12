@@ -10,11 +10,15 @@ function scrollDown() {
 	var postOffset = 50;
 	var postDiv = document.getElementById("posts");
 	var posts = getElementsByClassName("post", "div", postDiv);
-	var index = findCurrentIndex(posts, postOffset);
-	if (index >= posts.length) {
-		return;
+	if (window.scrollY == 0) {
+		scrollToPost(posts[0], postOffset);
+	} else {
+		var index = findCurrentIndex(posts, postOffset);
+		if (index >= posts.length) {
+			return;
+		}
+		scrollToPost(posts[index+1], postOffset);
 	}
-	scrollToPost(posts[index+1], postOffset);
 };
 
 function scrollUp() {
@@ -81,9 +85,9 @@ function KeyCheck(e) {
 function scrollVertically(element, offset) {
 	var pos = findPos(element)[1] + offset;
 	var re=/html$/i;
-	while (!re.test(element.tagName) && (1 > element.scrollTop))
+	while (!re.test(element.tagName) && (1 >= element.scrollTop))
 		element = element.parentNode;
-	if (0 < element.scrollTop) element.scrollTop = pos;
+	if (0 <= element.scrollTop) element.scrollTop = pos;
 };
 
 /**
