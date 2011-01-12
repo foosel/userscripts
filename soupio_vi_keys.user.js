@@ -10,7 +10,7 @@ function scrollDown() {
 	var postOffset = 50;
 	var postDiv = document.getElementById("posts");
 	var posts = getElementsByClassName("post", "div", postDiv);
-	var index = findCurrentIndex(posts);
+	var index = findCurrentIndex(posts, postOffset);
 	if (index >= posts.length) {
 		return;
 	}
@@ -21,7 +21,7 @@ function scrollUp() {
 	var postOffset = 50;
 	var postDiv = document.getElementById("posts");
 	var posts = getElementsByClassName("post", "div", postDiv);
-	var index = findCurrentIndex(posts);
+	var index = findCurrentIndex(posts, postOffset);
 	if (index <= 0) {
 		return;
 	}
@@ -32,12 +32,12 @@ function scrollToPost(post, offset) {
 	scrollVertically(post, -offset);
 };
 
-function findCurrentIndex(elements) {
-	var pos = window.scrollY;
+function findCurrentIndex(elements, offset) {
+	var pos = window.scrollY + offset;
 	for (var i = 0; i < elements.length; i++) {
 		var top = findPos(elements[i])[1];
 		var bottom = top + elements[i].offsetHeight;
-		if (top >= pos) {
+		if (bottom > pos) {
 			return i;
 		}
 	}
